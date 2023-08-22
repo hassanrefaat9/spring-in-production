@@ -2,7 +2,7 @@ name: Java CI with Gradle
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "jar_workflow_aws" ]
   pull_request:
     branches: [ "master" ]
 
@@ -23,3 +23,14 @@ jobs:
       uses: gradle/gradle-build-action@bd5760595778326ba7f1441bcf7e88b49de61a25 # v2.6.0
       with:
         arguments: build
+    - name: Create Timestamp for version info
+      id: time
+      uses: nanzm/get-time-action@master
+      with:
+        format: 'YYYY-MM-DD-HH-mm-ss'
+    - name: Make Artifact Available
+      uses: actions/upload-artifact@v2
+      with:
+        name: "Artifact-${{steps.time.outputs.time}}"
+        path: build/libs
+        retention-days: 5
