@@ -2,7 +2,7 @@ name: Java CI with Gradle
 
 on:
   push:
-    branches: [ "jar_workflow_aws" ]
+    branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
 
@@ -34,3 +34,13 @@ jobs:
         name: "Artifact-${{steps.time.outputs.time}}"
         path: build/libs
         retention-days: 5
+    - name: Deploy to AWS Beanstalk
+      uses: einaregilsson/beanstalk-deploy@v21
+      with:
+        aws_access_key: ${{secrets.AWS_ACCESS_KEY_ID}}
+        aws_secret_key: ${{secrets.AWS_SECRET_KEY_ID}}
+        application_name: SpringInProdApp
+        environment_name: SpringInProdApp-env
+        version_label: SpringInProdApp-${{steps.time.outputs.time}}
+        region: us-east-1
+        deployment_package: build/libs/spring-in-prod-0.0.1-SNAPSHOT.jar
